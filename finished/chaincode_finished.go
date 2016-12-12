@@ -189,5 +189,5 @@ func (t *SimpleChaincode) add_SKATEmployee(stub shim.ChaincodeStubInterface, arg
     key = strconv.Itoa(Employee.CPRNum)
 	err = stub.PutState(key, jsonAsBytes)									//store employee with id as key
 	fmt.Println("- end add marble 2")
-	return nil, nil
+	return jsonAsBytes, nil
 }
