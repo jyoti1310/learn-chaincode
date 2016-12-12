@@ -19,32 +19,12 @@ package main
 import (
 	"errors"
 	"fmt"
-	"strconv"
-	"encoding/json"
-	"strings"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
-}
-
-type SKATEmployee struct{
-        CPRNum int `json:"CPRNum"`
-        VirkNum int `json:"VirkNum"`
-        CPRNavn string `json:"CPRNavn"`
-        DateOfWork string `json:"DOW"`
-		NoOfHours int `json:"NoOfHours"`
-		Comment string `json:"Comments"`
-}
-
-type SKATEmployeeRepository struct{
-	EmployeeList []SKATEmployee `json:"employee_list"`
-}
-
-type searchedEmployees struct{
-	SearchedEmployeeList []SKATEmployee `json:"searched_employee_list"`
 }
 
 func main() {
@@ -132,62 +112,4 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
 	}
 
 	return valAsbytes, nil
-}
-
-// ============================================================================================================================
-// Init Marble - create a new marble, store into chaincode state
-// ============================================================================================================================
-func (t *SimpleChaincode) add_SKATEmployee(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var err error
-	var key string
-	
-	// CPRNum int `json:"CPRNum"`
-    // VirkNum int `json:"VirkNum"`
-      //  CPRNavn string `json:"CPRNavn"`
-       // DOW string `json:"DOW"`
-	//NoOfHours int `json:"NoOfHours"`
-	//Comment string `json:"Comments"`
-	//   0       1       2     3
-	// "asdf", "blue", "35", "bob"
-	if len(args) != 5 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 5")
-	}
-
-	//input sanitation
-	fmt.Println("- start init SKATEmployee")
-	if len(args[0]) <= 0 {
-		return nil, errors.New("1st argument must be a non-empty string")
-	}
-	if len(args[1]) <= 0 {
-		return nil, errors.New("2nd argument must be a non-empty string")
-	}
-	if len(args[2]) <= 0 {
-		return nil, errors.New("3rd argument must be a non-empty string")
-	}
-	if len(args[3]) <= 0 {
-		return nil, errors.New("4th argument must be a non-empty string")
-	}
-	Employee := SKATEmployee{}
-	Employee.CPRNum, err = strconv.Atoi(args[0])
-	if err != nil {
-		return nil, errors.New("3rd argument must be a numeric string")
-	}
-	Employee.VirkNum, err = strconv.Atoi(args[1])
-	Employee.CPRNavn = strings.ToLower(args[2])
-	Employee.DateOfWork = strings.ToLower(args[3])
-	Employee.NoOfHours, err = strconv.Atoi(args[4])
-
-	if len(args) == 6 {
-	Employee.Comment = args[5]
-  	}
-	fmt.Println("adding employee @ " + strconv.Itoa(Employee.CPRNum) + ", " + strconv.Itoa(Employee.VirkNum) + ", " + Employee.CPRNavn);
-	fmt.Println("- end add Employee 1")
-	jsonAsBytes, _ := json.Marshal(Employee)
-	
-	var  employeeRepository SKATEmployeeRepository
-	employeeRepository.EmployeeList = append(employeeRepository.EmployeeList,Employee)
-    key = strconv.Itoa(Employee.CPRNum)
-	err = stub.PutState(key, jsonAsBytes)									//store employee with id as key
-	fmt.Println("- end add marble 2")
-	return nil, nil
 }
