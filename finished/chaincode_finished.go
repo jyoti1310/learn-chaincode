@@ -141,7 +141,7 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
 // ============================================================================================================================
 func (t *SimpleChaincode) addSKATEmployee(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	var key, jsonResp string
+	var key string
 	
 	// CPRNum int `json:"CPRNum"`
     // VirkNum int `json:"VirkNum"`
@@ -179,20 +179,15 @@ func (t *SimpleChaincode) addSKATEmployee(stub shim.ChaincodeStubInterface, args
 	Employee.DateOfWork = strings.ToLower(args[3])
 	Employee.NoOfHours, err = strconv.Atoi(args[4])
 
-	if err != nil {
-		return nil, err
-	}
-	
 	if len(args) == 6 {
 	Employee.Comment = args[5]
   	}
 	fmt.Println("adding employee @ " + strconv.Itoa(Employee.CPRNum) + ", " + strconv.Itoa(Employee.VirkNum) + ", " + Employee.CPRNavn);
 	fmt.Println("- end add Employee 1")
-	jsonResp = "- end add Employee 1"
 	jsonAsBytes, _ := json.Marshal(Employee)
 
 	if err != nil {
-		return jsonAsBytes, errors.New(jsonResp)
+		return jsonAsBytes, err
 	}
 	
 	var  employeeRepository SKATEmployeeRepository
@@ -200,9 +195,8 @@ func (t *SimpleChaincode) addSKATEmployee(stub shim.ChaincodeStubInterface, args
     key = strconv.Itoa(Employee.CPRNum)
 	err = stub.PutState(key, jsonAsBytes)	//store employee with id as key
 	if err != nil {
-		return jsonAsBytes, err
+		return nil, err
 	}								
-	jsonResp = "- key stored:" + key
-	fmt.Println("- end add marble 2")
-	return jsonAsBytes,  errors.New(jsonResp)
+	fmt.Println("- end add Employee 2")
+	return jsonAsBytes, nil
 }
