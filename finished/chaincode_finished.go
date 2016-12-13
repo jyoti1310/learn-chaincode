@@ -77,6 +77,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.Init(stub, "init", args)
 	} else if function == "write" {
 		return t.write(stub, args)
+	} else if  function == "addSKATEmployee" {
+		return t.addSKATEmployee(stub, args)
 	}
 	fmt.Println("invoke did not find func: " + function)
 
@@ -90,8 +92,6 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	// Handle different functions
 	if function == "read" { //read a variable
 		return t.read(stub, args)
-	} else if  function == "addSKATEmployee" {
-		return t.addSKATEmployee(stub, args)
 	}
 	fmt.Println("query did not find func: " + function)
 
