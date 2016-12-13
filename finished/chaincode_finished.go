@@ -137,7 +137,7 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
 // ============================================================================================================================
 // Init Marble - create a new marble, store into chaincode state
 // ============================================================================================================================
-func (t *SimpleChaincode) add_SKATEmployee(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *SimpleChaincode) addSKATEmployee(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
 	var key string
 	
