@@ -90,6 +90,8 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	// Handle different functions
 	if function == "read" { //read a variable
 		return t.read(stub, args)
+	} else if  function == "addSKATEmployee" {
+		return t.addSKATEmployee(stub, args)
 	}
 	fmt.Println("query did not find func: " + function)
 
