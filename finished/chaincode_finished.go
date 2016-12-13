@@ -179,6 +179,9 @@ func (t *SimpleChaincode) addSKATEmployee(stub shim.ChaincodeStubInterface, args
 	Employee.DateOfWork = strings.ToLower(args[3])
 	Employee.NoOfHours, err = strconv.Atoi(args[4])
 
+	if err != nil {
+		return nil, err
+	}
 	if len(args) == 6 {
 	Employee.Comment = args[5]
   	}
