@@ -214,7 +214,8 @@ func (t *SimpleChaincode) addSKATEmployee(stub shim.ChaincodeStubInterface, args
 	if err != nil {
 		return nil, err
 	}		
-	fmt.Println("len(employeeRepository) in Add:"+ strconv.Itoa(len(employeeRepository.EmployeeList)));						
+	fmt.Println("len(employeeRepository) in Add:"+ strconv.Itoa(len(employeeRepository.EmployeeList)));	
+	fmt.Println("employeeRepository:", employeeRepository.EmployeeList[0:])					
 	fmt.Println("- end add Employee 2")
 	return jsonAsBytes, nil
 }
@@ -235,7 +236,7 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 	}
 
 	cprNo = args[0]
-	virkNo = args[1]
+	strings.Trim(args[1],virkNo)
   	
 	repositoryJsonAsBytes, err := stub.GetState("SKATEmployeeRepository")
 	if err != nil {
@@ -265,10 +266,9 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 		virkForEmployee= strconv.Itoa(skatEmployee.VirkNum)
 		fmt.Println("matching record")
 		//fmt.Println("looking at " + strconv.FormatInt(trades.OpenTrades[i].Timestamp, 10) + " for " + strconv.FormatInt(timestamp, 10))
-		if 	(strings.Contains(cprForEmployee,cprNo) || strings.Contains(virkForEmployee,virkNo)){
-			fmt.Println("found the employee 1");
+		if 	(strings.Contains(cprForEmployee,cprNo) || ( len(virkNo)>0 && strings.Contains(virkForEmployee,virkNo))){
 			SearchedEmployeeList = append(SearchedEmployeeList,skatEmployee)
-			fmt.Println("found the employee 2"+ skatEmployee.CPRNavn );
+			fmt.Println("found the employee-"+ skatEmployee.CPRNavn );
 			temp, err := json.Marshal(skatEmployee)
 			if err == nil {
 			result += string(temp) + ","
@@ -306,10 +306,12 @@ if len(args) != 2 {
 
 comment=args[1]
 employee , err= t.getEmployee(stub,cprNum)
+fmt.Println("Updating Employee -"+ strconv.Itoa(employee.CPRNum) +" "+ employee.CPRNavn)
 employee.Comment = comment
 key = strconv.Itoa(employee.CPRNum) + "_" + strconv.Itoa(employee.VirkNum) + "_" + employee.DateOfWork
 jsonAsBytes, _ := json.Marshal(employee)
-err = stub.PutState(key, []byte(jsonAsBytes)) //write the variable into the chaincode state
+err = stub.PutState(key, jsonAsBytes) //write the variable into the chaincode state
+fmt.Println("Updated Employee with key-"+key)
 
 if err != nil {
 		jsonResp = "{\"Error\":\"Failed to update Employee" + "\"}"
