@@ -228,7 +228,9 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 	var cprNo, virkNo, cprForEmployee , virkForEmployee string
 	var jsonResp  string
 	var err error
-	var SearchedEmployeeList []SKATEmployee 
+	//var SearchedEmployeeList []SKATEmployee 
+
+	SearchedEmployeeList := []SKATEmployee{}
 	
 	if len(args) != 2 {
 		return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
@@ -250,11 +252,19 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 																	//look for the trade
 		//fmt.Println("looking at " + strconv.FormatInt(trades.OpenTrades[i].Timestamp, 10) + " for " + strconv.FormatInt(timestamp, 10))
 		if 	(strings.Contains(cprForEmployee,cprNo) || strings.Contains(virkForEmployee,virkNo)){
-			fmt.Println("found the employee");
-			SearchedEmployeeList = append(SearchedEmployeeList,employeeRepository.EmployeeList[i])			
+			fmt.Println("found the employee 1");
+			SearchedEmployeeList = append(SearchedEmployeeList,employeeRepository.EmployeeList[i])
+			fmt.Println("found the employee 2"+ SearchedEmployeeList[i].CPRNavn );
+			fmt.Println("SearchedEmployeeList[:"+ strconv.Itoa(i) +"] ==", SearchedEmployeeList[:i])		
 		}
 	}
-	jsonAsBytes, _ := json.Marshal(SearchedEmployeeList)
+	//jsonAsBytes, _ := json.Marshal(len(SearchedEmployeeList[:]))
+
+	var interfaceSlice []interface{} = make([]interface{}, len(SearchedEmployeeList))
+	for i, skatEmployee := range SearchedEmployeeList {
+    interfaceSlice[i] = skatEmployee
+	}
+	jsonAsBytes, _ := json.Marshal(interfaceSlice)
 	return jsonAsBytes, nil
 
 }
