@@ -143,7 +143,7 @@ func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
 // ============================================================================================================================
 func (t *SimpleChaincode) addSKATEmployee(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var err error
-	var key string
+	var key,jsonResp string
 	
 	// CPRNum int `json:"CPRNum"`
     // VirkNum int `json:"VirkNum"`
@@ -192,16 +192,27 @@ func (t *SimpleChaincode) addSKATEmployee(stub shim.ChaincodeStubInterface, args
 		return jsonAsBytes, err
 	}
 	
-	var  employeeRepository SKATEmployeeRepository
-	employeeRepository.EmployeeList = append(employeeRepository.EmployeeList,Employee)
-    key = strconv.Itoa(Employee.CPRNum)
+	 key = strconv.Itoa(Employee.CPRNum)
 	err = stub.PutState(key, jsonAsBytes)	//store employee with id as key
 	if err != nil {
 		return nil, err
-	}		
+	}	
+	//var  employeeRepository SKATEmployeeRepository
+	//employeeRepository.EmployeeList = append(employeeRepository.EmployeeList,Employee)
+	//SKATEmployeeRepository.EmployeeList = append(SKATEmployeeRepository.EmployeeList,Employee)
+	repositoryJsonAsBytes, err := stub.GetState("SKATEmployeeRepository")
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + "SKATEmployeeRepository" + "\"}"
+		return nil, errors.New(jsonResp)
+	}
+	var employeeRepository SKATEmployeeRepository
+	json.Unmarshal(repositoryJsonAsBytes, &employeeRepository)	
+
+
+   	employeeRepository.EmployeeList = append(employeeRepository.EmployeeList,Employee)
 	//update Employee Repository
-	repositoryJsonAsBytes,_  := json.Marshal(employeeRepository.EmployeeList)
-	err = stub.PutState("SKATEmployeeRepository", repositoryJsonAsBytes)	//store employee with id as key
+	updatedRepositoryJsonAsBytes, _  := json.Marshal(employeeRepository)
+	err = stub.PutState("SKATEmployeeRepository", updatedRepositoryJsonAsBytes)	//store employee with id as key
 	if err != nil {
 		return nil, err
 	}		
