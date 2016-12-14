@@ -248,9 +248,9 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 	json.Unmarshal(repositoryJsonAsBytes, &employeeRepository)	
 	
 	fmt.Println("len(employeeRepository) in search:"+ strconv.Itoa(len(employeeRepository.EmployeeList)));
-	for i := range employeeRepository.EmployeeList{
+	/*for i := range employeeRepository.EmployeeList{
 		cprForEmployee = strconv.Itoa(employeeRepository.EmployeeList[i].CPRNum)
-																	//look for the trade
+		fmt.Println("matching record:"+ strconv.Itoa(i))
 		//fmt.Println("looking at " + strconv.FormatInt(trades.OpenTrades[i].Timestamp, 10) + " for " + strconv.FormatInt(timestamp, 10))
 		if 	(strings.Contains(cprForEmployee,cprNo) || strings.Contains(virkForEmployee,virkNo)){
 			fmt.Println("found the employee 1");
@@ -258,15 +258,38 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 			fmt.Println("found the employee 2"+ SearchedEmployeeList[i].CPRNavn );
 			fmt.Println("SearchedEmployeeList[:"+ strconv.Itoa(i) +"] ==", SearchedEmployeeList[i])		
 		}
-	}
+	}*/
 	//jsonAsBytes, _ := json.Marshal(len(SearchedEmployeeList[:]))
-
-	var interfaceSlice []interface{} = make([]interface{}, len(SearchedEmployeeList))
+	result := "["
+	
+	for _,skatEmployee := range employeeRepository.EmployeeList{
+		cprForEmployee = strconv.Itoa(skatEmployee.CPRNum)
+		virkForEmployee= strconv.Itoa(skatEmployee.VirkNum)
+		fmt.Println("matching record")
+		//fmt.Println("looking at " + strconv.FormatInt(trades.OpenTrades[i].Timestamp, 10) + " for " + strconv.FormatInt(timestamp, 10))
+		if 	(strings.Contains(cprForEmployee,cprNo) || strings.Contains(virkForEmployee,virkNo)){
+			fmt.Println("found the employee 1");
+			SearchedEmployeeList = append(SearchedEmployeeList,skatEmployee)
+			fmt.Println("found the employee 2"+ skatEmployee.CPRNavn );
+			temp, err := json.Marshal(skatEmployee)
+			if err == nil {
+			result += string(temp) + ","
+			}
+		}
+	
+	}
+	if len(result) == 1 {
+		result = "[]"
+	} else {
+		result = result[:len(result)-1] + "]"
+	}	
+	fmt.Println("SearchedEmployeeList:", SearchedEmployeeList[0:])
+/*	var interfaceSlice []interface{} = make([]interface{}, len(SearchedEmployeeList))
 	for i, skatEmployee := range SearchedEmployeeList {
     interfaceSlice[i] = skatEmployee
-	}
-	fmt.Println("SearchedEmployeeList:", SearchedEmployeeList[0:])
 	jsonAsBytes, _ := json.Marshal(interfaceSlice)
-	return jsonAsBytes, nil
+	}*/
+
+	return []byte(result), nil
 
 }
