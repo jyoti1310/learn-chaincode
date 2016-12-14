@@ -219,13 +219,13 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 	var err error
 	var SearchedEmployeeList []SKATEmployee 
 	
-	if len(args) != 1 {
+	if len(args) != 2 {
 		return nil, errors.New("Incorrect number of arguments. Expecting name of the key to query")
 	}
 
 	cprNo = args[0]
 	virkNo = args[1]
-	
+  	
 	repositoryJsonAsBytes, err := stub.GetState("SKATEmployeeRepository")
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + "SKATEmployeeRepository" + "\"}"
