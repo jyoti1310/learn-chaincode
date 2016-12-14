@@ -289,7 +289,15 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
     interfaceSlice[i] = skatEmployee
 	jsonAsBytes, _ := json.Marshal(interfaceSlice)
 	}*/
-
-	return []byte(result), nil
+	err = stub.PutState("SearchedEmployee", []byte(result))
+	if err != nil {
+		return nil, err
+	}
+	resultAsBytes, err := stub.GetState("SearchedEmployee")
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + "SKATEmployeeRepository" + "\"}"
+		return nil, errors.New(jsonResp)
+	}	
+	return resultAsBytes, nil
 
 }
