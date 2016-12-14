@@ -216,7 +216,7 @@ func (t *SimpleChaincode) addSKATEmployee(stub shim.ChaincodeStubInterface, args
 	if err != nil {
 		return nil, err
 	}		
-							
+	fmt.Println("len(employeeRepository) in Add:"+ strconv.Itoa(len(employeeRepository.EmployeeList)));						
 	fmt.Println("- end add Employee 2")
 	return jsonAsBytes, nil
 }
@@ -246,7 +246,8 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 	}
 	var employeeRepository SKATEmployeeRepository
 	json.Unmarshal(repositoryJsonAsBytes, &employeeRepository)	
-
+	
+	fmt.Println("len(employeeRepository) in search:"+ strconv.Itoa(len(employeeRepository.EmployeeList)));
 	for i := range employeeRepository.EmployeeList{
 		cprForEmployee = strconv.Itoa(employeeRepository.EmployeeList[i].CPRNum)
 																	//look for the trade
@@ -255,7 +256,7 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 			fmt.Println("found the employee 1");
 			SearchedEmployeeList = append(SearchedEmployeeList,employeeRepository.EmployeeList[i])
 			fmt.Println("found the employee 2"+ SearchedEmployeeList[i].CPRNavn );
-			fmt.Println("SearchedEmployeeList[:"+ strconv.Itoa(i) +"] ==", SearchedEmployeeList[:i])		
+			fmt.Println("SearchedEmployeeList[:"+ strconv.Itoa(i) +"] ==", SearchedEmployeeList[i])		
 		}
 	}
 	//jsonAsBytes, _ := json.Marshal(len(SearchedEmployeeList[:]))
@@ -264,6 +265,7 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 	for i, skatEmployee := range SearchedEmployeeList {
     interfaceSlice[i] = skatEmployee
 	}
+	fmt.Println("SearchedEmployeeList:", SearchedEmployeeList[0:])
 	jsonAsBytes, _ := json.Marshal(interfaceSlice)
 	return jsonAsBytes, nil
 
