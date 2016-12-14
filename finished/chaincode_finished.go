@@ -79,6 +79,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.write(stub, args)
 	} else if  function == "addSKATEmployee" {
 		return t.addSKATEmployee(stub, args)
+	} else if function == "searchSKATEmployee" {
+		return t.searchSKATEmployee(stub,args)
 	}
 	fmt.Println("invoke did not find func: " + function)
 
