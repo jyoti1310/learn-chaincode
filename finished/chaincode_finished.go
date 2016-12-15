@@ -261,6 +261,11 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 		}
 	}*/
 	//jsonAsBytes, _ := json.Marshal(len(SearchedEmployeeList[:]))
+	fmt.Println("searching cpr Number:"+ cprNo + " Virk Num:"+ virkNo)
+	fmt.Println("len(cprNo):"+ strconv.Itoa(len(cprNo)))
+	fmt.Println("len(virkNo):"+ strconv.Itoa(len(virkNo)))
+	fmt.Println("len(cprNo)==0:"+ strconv.FormatBool(len(cprNo)==0))
+	fmt.Println("len(virkNo)==0:"+ strconv.FormatBool(len(virkNo)==0))
 	result := "["
 	
 	for _,skatEmployee := range employeeRepository.EmployeeList{
@@ -274,13 +279,13 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 				foundEmployee=true
 				fmt.Println("found both")
 				}
-		} else if len(cprNo) > 0 && len(virkNo)==0 {
+		} else if ((len(cprNo) > 0) && (len(virkNo)==0)) {
 			fmt.Println("matching cprNo")
 			if cprForEmployee == cprNo {
 				foundEmployee=true
 				fmt.Println("found cprNo")
 				}
-		} else if len(virkNo) > 0  && len(cprNo)==0 {
+		} else if ((len(virkNo) > 0)  && (len(cprNo)==0)) {
 			fmt.Println("matching virkNo")
 			if virkForEmployee == virkNo {
 				foundEmployee=true
