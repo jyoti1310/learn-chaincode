@@ -228,7 +228,7 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 	var jsonResp  string
 	var err error
 	var foundEmployee bool
-
+	foundEmployee = false
 	//var SearchedEmployeeList []SKATEmployee 
 
 	SearchedEmployeeList := []SKATEmployee{}
@@ -268,17 +268,22 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 		virkForEmployee= strconv.Itoa(skatEmployee.VirkNum)
 		fmt.Println("matching record")
 		if ( len(cprNo) >0 && len (virkNo) >0 ){
-			
-			if (strings.Contains(cprForEmployee,cprNo) && strings.Contains(virkForEmployee,virkNo) ){
+			fmt.Println("matching both")
+			if (cprForEmployee == cprNo && virkForEmployee == virkNo ){
 				foundEmployee=true
+				fmt.Println("found both")
 				}
 		} else if len(cprNo) > 0 {
-			if (strings.Contains(cprForEmployee,cprNo)){
+			fmt.Println("matching cprNo")
+			if cprForEmployee == cprNo {
 				foundEmployee=true
+				fmt.Println("found cprNo")
 				}
 		} else if len(virkNo) > 0  {
-			if (strings.Contains(virkForEmployee,cprNo)){
+			fmt.Println("matching virkNo")
+			if virkForEmployee == virkNo {
 				foundEmployee=true
+				fmt.Println("found virkNo")
 				}
 		}
 		//fmt.Println("looking at " + strconv.FormatInt(trades.OpenTrades[i].Timestamp, 10) + " for " + strconv.FormatInt(timestamp, 10))
@@ -439,7 +444,7 @@ repositoryJsonAsBytes, err := stub.GetState("SKATEmployeeRepository")
 		dateOfWorkForEmployee=skatEmployee.DateOfWork
 		fmt.Println("matching record")
 		//fmt.Println("looking at " + strconv.FormatInt(trades.OpenTrades[i].Timestamp, 10) + " for " + strconv.FormatInt(timestamp, 10))
-		if 	(strings.Contains(cprForEmployee,strconv.Itoa(employee.CPRNum)) && strings.Contains(virkNumForEmployee,strconv.Itoa(employee.VirkNum)) && strings.Contains(dateOfWorkForEmployee,employee.DateOfWork) ){
+		if 	((cprForEmployee == strconv.Itoa(employee.CPRNum)) && (virkNumForEmployee == strconv.Itoa(employee.VirkNum)) && (dateOfWorkForEmployee == employee.DateOfWork) ){
 			fmt.Println("found the employee 1" + skatEmployee.CPRNavn );
 			//do not copy
 			} else {//copy
