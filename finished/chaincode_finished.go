@@ -308,7 +308,7 @@ virkNum=args[1]
 dateOfWork=args[2]
 comment=args[3]
 employee , err= t.getEmployeeLog(stub,cprNum,virkNum,dateOfWork)
-fmt.Println("Updating Employee -"+ strconv.Itoa(employee.CPRNum) +" "+ employee.CPRNavn)
+fmt.Println("Updating Employee -"+ strconv.Itoa(employee.CPRNum) +" "+ strconv.Itoa(employee.VirkNum)+" "+ employee.DateOfWork)
 employee.Comment = comment
 key = strconv.Itoa(employee.CPRNum) + "_" + strconv.Itoa(employee.VirkNum) + "_" + employee.DateOfWork
 jsonAsBytes, _ := json.Marshal(employee)
@@ -319,7 +319,7 @@ if err != nil {
 		jsonResp = "{\"Error\":\"Failed to update Employee" + "\"}"
 		return nil, errors.New(jsonResp)
 	}
-_, err = t.updateEmployeeRepository(stub,key,employee)
+_, err = t.updateEmployeeRepository(stub,employee)
 if err != nil {
 		jsonResp = "{\"Error\":\"Failed to update SKAT Repository" + "\"}"
 		return nil, errors.New(jsonResp)
@@ -329,10 +329,10 @@ return jsonAsBytes,nil
 }
 
 //==================================================================================================================================
-
+//Append to EmployeeRepository
 //===================================================================================================================================
 
-func (t *SimpleChaincode) updateEmployeeRepository(stub shim.ChaincodeStubInterface,  key string,employee SKATEmployee) (bool, error){
+func (t *SimpleChaincode) appendtoEmployeeRepository(stub shim.ChaincodeStubInterface,  key string,employee SKATEmployee) (bool, error){
 
 var jsonResp string 
 repositoryJsonAsBytes, err := stub.GetState("SKATEmployeeRepository")
@@ -343,8 +343,7 @@ repositoryJsonAsBytes, err := stub.GetState("SKATEmployeeRepository")
 	var employeeRepository SKATEmployeeRepository
 	json.Unmarshal(repositoryJsonAsBytes, &employeeRepository)	
 
-
-   	employeeRepository.EmployeeList = append(employeeRepository.EmployeeList,employee)
+	employeeRepository.EmployeeList = append(employeeRepository.EmployeeList,employee)
 	//update Employee Repository
 	updatedRepositoryJsonAsBytes, _  := json.Marshal(employeeRepository)
 	err = stub.PutState("SKATEmployeeRepository", updatedRepositoryJsonAsBytes)	//store employee with id as key
@@ -403,4 +402,43 @@ func (t *SimpleChaincode) getEmployeeLog(stub shim.ChaincodeStubInterface, cprNu
 	return employee, nil
 	
 	}
+
+//==================================================================================================================================
+//Replace Record in EmployeeRepository
+//===================================================================================================================================
+
+func (t *SimpleChaincode) updateEmployeeRepository(stub shim.ChaincodeStubInterface, employee SKATEmployee) (bool, error){
+
+var jsonResp,cprForEmployee,virkNumForEmployee, dateOfWorkForEmployee string 
+repositoryJsonAsBytes, err := stub.GetState("SKATEmployeeRepository")
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + "SKATEmployeeRepository" + "\"}"
+		return false, errors.New(jsonResp)
+	}
+	var initialEmployeeRepository,finalEmployeeRepository SKATEmployeeRepository
+	json.Unmarshal(repositoryJsonAsBytes, &initialEmployeeRepository)	
+	
+	for _,skatEmployee := range initialEmployeeRepository.EmployeeList{
+		cprForEmployee = strconv.Itoa(skatEmployee.CPRNum)
+		virkNumForEmployee= strconv.Itoa(skatEmployee.VirkNum)
+		dateOfWorkForEmployee=skatEmployee.DateOfWork
+		fmt.Println("matching record")
+		//fmt.Println("looking at " + strconv.FormatInt(trades.OpenTrades[i].Timestamp, 10) + " for " + strconv.FormatInt(timestamp, 10))
+		if 	(strings.Contains(cprForEmployee,strconv.Itoa(employee.CPRNum)) && strings.Contains(virkNumForEmployee,strconv.Itoa(employee.VirkNum)) && strings.Contains(dateOfWorkForEmployee,employee.DateOfWork) ){
+			fmt.Println("found the employee 1" + skatEmployee.CPRNavn );
+			//do not copy
+			} else {//copy
+				finalEmployeeRepository.EmployeeList = append(finalEmployeeRepository.EmployeeList,skatEmployee)	
+			}
+		
+		}
+	finalEmployeeRepository.EmployeeList = append(finalEmployeeRepository.EmployeeList,employee)
+	//update Employee Repository
+	updatedRepositoryJsonAsBytes, _  := json.Marshal(finalEmployeeRepository)
+	err = stub.PutState("SKATEmployeeRepository", updatedRepositoryJsonAsBytes)	//store employee with id as key
+	if err != nil {
+		return false, err
+	}		
+	return true, nil
+}
 	
