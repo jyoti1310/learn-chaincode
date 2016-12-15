@@ -264,6 +264,7 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 	result := "["
 	
 	for _,skatEmployee := range employeeRepository.EmployeeList{
+		foundEmployee = false
 		cprForEmployee = strconv.Itoa(skatEmployee.CPRNum)
 		virkForEmployee= strconv.Itoa(skatEmployee.VirkNum)
 		fmt.Println("matching record")
