@@ -227,6 +227,8 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 	var cprNo, virkNo, cprForEmployee , virkForEmployee string
 	var jsonResp  string
 	var err error
+	var foundEmployee bool
+
 	//var SearchedEmployeeList []SKATEmployee 
 
 	SearchedEmployeeList := []SKATEmployee{}
@@ -265,8 +267,22 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 		cprForEmployee = strconv.Itoa(skatEmployee.CPRNum)
 		virkForEmployee= strconv.Itoa(skatEmployee.VirkNum)
 		fmt.Println("matching record")
+		if ( len(cprNo) >0 && len (virkNo) >0 ){
+			
+			if (strings.Contains(cprForEmployee,cprNo) && strings.Contains(virkForEmployee,virkNo) ){
+				foundEmployee=true
+				}
+		} else if len(cprNo) > 0 {
+			if (strings.Contains(cprForEmployee,cprNo)){
+				foundEmployee=true
+				}
+		} else if len(virkNo) > 0  {
+			if (strings.Contains(virkForEmployee,cprNo)){
+				foundEmployee=true
+				}
+		}
 		//fmt.Println("looking at " + strconv.FormatInt(trades.OpenTrades[i].Timestamp, 10) + " for " + strconv.FormatInt(timestamp, 10))
-		if 	(strings.Contains(cprForEmployee,cprNo) || ( len(virkNo)>0 && strings.Contains(virkForEmployee,virkNo))){
+		if 	(foundEmployee){
 			SearchedEmployeeList = append(SearchedEmployeeList,skatEmployee)
 			fmt.Println("found the employee-"+ skatEmployee.CPRNavn );
 			temp, err := json.Marshal(skatEmployee)
@@ -274,7 +290,6 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 			result += string(temp) + ","
 			}
 		}
-	
 	}
 	if len(result) == 1 {
 		result = "[]"
