@@ -237,7 +237,7 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 		return nil, errors.New("Incorrect number of arguments. Expecting CPRNum , VirkNum as input")
 	}
 
-	cprNo = args[0]
+	strings.Trim(args[0],cprNo)
 	strings.Trim(args[1],virkNo)
   	
 	repositoryJsonAsBytes, err := stub.GetState("SKATEmployeeRepository")
@@ -274,13 +274,13 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 				foundEmployee=true
 				fmt.Println("found both")
 				}
-		} else if len(cprNo) > 0 {
+		} else if len(cprNo) > 0 && len(virkNo)==0 {
 			fmt.Println("matching cprNo")
 			if cprForEmployee == cprNo {
 				foundEmployee=true
 				fmt.Println("found cprNo")
 				}
-		} else if len(virkNo) > 0  {
+		} else if len(virkNo) > 0  && len(cprNo)==0 {
 			fmt.Println("matching virkNo")
 			if virkForEmployee == virkNo {
 				foundEmployee=true
