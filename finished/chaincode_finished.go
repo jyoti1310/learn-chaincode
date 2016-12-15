@@ -286,8 +286,9 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 				fmt.Println("found virkNo")
 				}
 		}
+		fmt.Println("foundEmployee : " + strconv.FormatBool(foundEmployee))
 		//fmt.Println("looking at " + strconv.FormatInt(trades.OpenTrades[i].Timestamp, 10) + " for " + strconv.FormatInt(timestamp, 10))
-		if 	(foundEmployee){
+		if 	(foundEmployee == true){
 			SearchedEmployeeList = append(SearchedEmployeeList,skatEmployee)
 			fmt.Println("found the employee-"+ skatEmployee.CPRNavn );
 			temp, err := json.Marshal(skatEmployee)
