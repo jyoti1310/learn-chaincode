@@ -295,17 +295,19 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 // Update Employee - Update Employee with Comments, store into chaincode state
 // ============================================================================================================================
 func (t *SimpleChaincode) updateSKATEmployee(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-var cprNum,comment, key,jsonResp string
+var cprNum,virkNum, dateOfWork,comment, key,jsonResp string
 var employee SKATEmployee
 var err error
 
-
-if len(args) != 2 {
+if len(args) != 4 {
 		return nil, errors.New("Incorrect number of arguments. Expecting CPRNum , Comments as input")
 	}
 
-comment=args[1]
-employee , err= t.getEmployee(stub,cprNum)
+cprNum=args[0]
+virkNum=args[1]
+dateOfWork=args[2]
+comment=args[3]
+employee , err= t.getEmployeeLog(stub,cprNum,virkNum,dateOfWork)
 fmt.Println("Updating Employee -"+ strconv.Itoa(employee.CPRNum) +" "+ employee.CPRNavn)
 employee.Comment = comment
 key = strconv.Itoa(employee.CPRNum) + "_" + strconv.Itoa(employee.VirkNum) + "_" + employee.DateOfWork
@@ -379,6 +381,26 @@ func (t *SimpleChaincode) getEmployee(stub shim.ChaincodeStubInterface, cprNum s
 		
 		}
 			return employee, nil
+	
+	}
+	// ============================================================================================================================
+// Get single Employee
+// ============================================================================================================================
+func (t *SimpleChaincode) getEmployeeLog(stub shim.ChaincodeStubInterface, cprNum string,VirkNum string ,DateOfWork string) (SKATEmployee, error) {
+
+	var employee SKATEmployee
+	var key string
+	key=cprNum+"_"+VirkNum+"_"+DateOfWork
+	bytes, err := stub.GetState(key)
+
+	if err != nil {
+			fmt.Printf("getEmployeeLog: Failed to find employee Log: %s", err); 
+			return employee, errors.New("getEmployeeLog: Failed to find employee Log with these details: %s"+ cprNum+" "+VirkNum+" "+DateOfWork) 
+		}
+
+	err = json.Unmarshal(bytes, &employee);
+
+	return employee, nil
 	
 	}
 	
