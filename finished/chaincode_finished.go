@@ -237,8 +237,8 @@ func (t *SimpleChaincode) searchSKATEmployee(stub shim.ChaincodeStubInterface, a
 		return nil, errors.New("Incorrect number of arguments. Expecting CPRNum , VirkNum as input")
 	}
 
-	strings.Trim(args[0],cprNo)
-	strings.Trim(args[1],virkNo)
+	cprNo = args[0]
+	virkNo = args[1]
   	
 	repositoryJsonAsBytes, err := stub.GetState("SKATEmployeeRepository")
 	if err != nil {
